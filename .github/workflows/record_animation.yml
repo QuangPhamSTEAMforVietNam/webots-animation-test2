@@ -7,14 +7,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      # 🔧 FIX BẮT BUỘC cho GitHub Actions + Docker
+      # 🔧 FIX 1: cho git trong container tin tưởng workspace
       - name: Fix git safe directory
         run: |
           git config --global --add safe.directory /github/workspace
 
+      # 🔧 FIX 2: đồng bộ ownership với Docker (root)
+      - name: Make workspace owned by root for Docker
+        run: |
+          sudo chown -R root:root /github/workspace
+
       - name: Record and deploy the animation
         uses: cyberbotics/webots-animation-action@master
-        env: 
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
