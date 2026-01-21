@@ -9,15 +9,25 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
 
-      # 🔧 FIX 1: cho git trong container tin tưởng workspace
+      # ✅ FIX 1: git safe.directory (dùng đúng workspace)
       - name: Fix git safe directory
         run: |
-          git config --global --add safe.directory /github/workspace
+          if [ -n "${GITHUB_WORKSPACE:-}" ] && [ -d "$GITHUB_WORKSPACE" ]; then
+            git config --global --add safe.directory "$GITHUB_WORKSPACE"
+            echo "Added safe.directory: $GITHUB_WORKSPACE"
+          else
+            echo "GITHUB_WORKSPACE not found, skipping git safe.directory"
+          fi
 
-      # 🔧 FIX 2: đồng bộ ownership với Docker (root)
+      # ✅ FIX 2: chown workspace cho Docker (guarded)
       - name: Make workspace owned by root for Docker
         run: |
-          sudo chown -R root:root /github/workspace
+          if [ -n "${GITHUB_WORKSPACE:-}" ] && [ -d "$GITHUB_WORKSPACE" ]; then
+            echo "Changing owner of $GITHUB_WORKSPACE to root"
+            sudo chown -R root:root "$GITHUB_WORKSPACE"
+          else
+            echo "GITHUB_WORKSPACE not found, skipping chown"
+          fi
 
       - name: Record and deploy the animation
         uses: cyberbotics/webots-animation-action@master
