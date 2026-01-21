@@ -1,11 +1,10 @@
 name: Allow GitHub runner workspace for Git safe.directory
-run: git config --global --add safe.directory /github/workspace
 
 on: [push]
 
 jobs:
   record:
-    runs-on: ubuntu-latest
+    runs-on: git config --global --add safe.directory /github/workspace
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
