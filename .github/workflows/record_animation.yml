@@ -8,12 +8,6 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-
-      # 🔧 FIX BẮT BUỘC cho GitHub Actions + Docker
-      - name: Fix git safe directory
-        run: |
-          git config --global --add safe.directory /github/workspace
-
       - name: Record and deploy the animation
         uses: cyberbotics/webots-animation-action@master
         env: 
